@@ -11,6 +11,13 @@ static const char *TAG_APP = "APP";
 
 App::App() : testScene_(ledMatrix_) {}
 
+App::~App() {
+    if (playlist_) {
+        delete playlist_;
+        playlist_ = nullptr;
+    }
+}
+
 void App::begin() {
     Log::begin(115200);
     Log::setLevel(LogLevel::DEBUG);
@@ -29,6 +36,14 @@ void App::begin() {
     bool sdOk = sdCard_.begin();
     if (sdOk) {
         sdCard_.logRootDir(1);
+        
+        // Try to load playlist
+        playlist_ = PlaylistLoader::load("/playlist.json");
+        if (playlist_) {
+            Log::info(TAG_APP, "Playlist loaded successfully: %d scenes", playlist_->sceneCount());
+        } else {
+            Log::warn(TAG_APP, "Failed to load playlist; using test scene");
+        }
     } else {
         Log::warn(TAG_APP, "Continuing without SD card; fallback scene will be used");
     }
