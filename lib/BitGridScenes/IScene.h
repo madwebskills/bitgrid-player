@@ -14,6 +14,7 @@ public:
     virtual void begin() = 0;
     virtual void tick(uint32_t dtMs) = 0;
     virtual void renderFrame() = 0;
+    virtual bool shouldStop() const { return false; }
 };
 
 } // namespace Scenes

@@ -25,7 +25,7 @@ constexpr uint16_t HEIGHT = TILE_H * TILES_Y;   // 24
 constexpr uint16_t NUM_LEDS = WIDTH * HEIGHT;   // 576
 
 // LED brightness cap (0-255)
-constexpr uint8_t LED_BRIGHTNESS = 32;
+constexpr uint8_t LED_BRIGHTNESS = 24;
 
 // WiFi credentials (station mode - connect to existing network)
 constexpr const char* WIFI_SSID = "MadAir";

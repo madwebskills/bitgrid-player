@@ -68,7 +68,7 @@ Acceptance:
 
 **Status:** Complete. PlaybackManager state machine handles scene transitions, timing, stop conditions. SceneFactory creates FX scenes dynamically. SceneSolidFX implements "solid" effect with color parsing. Goto scenes jump correctly. Deferred scene loading prevents stack overflow from rapid scene skipping. Heap stable at ~193KB free across infinite loops.
 
-## Phase 4 — Add first real content type
+## Phase 4 — Add first real content type ✅ COMPLETE
 Pick one:
 - Frame sequences (binary/raw) OR
 - Palette animations OR
@@ -79,6 +79,17 @@ Implement content reader in Content layer (not scenes).
 Acceptance:
 - At least one SD-backed animation plays.
 - Read errors are handled gracefully.
+
+**Status:** Complete. Implemented BGR1 binary frame format support:
+- `SceneFrames` scene type for streaming BGR1 animations from SD card
+- 16-byte header with magic, dimensions, frame count, data offset
+- Validation: magic "BGR1", channels=3, dimensions match display
+- Frame-by-frame streaming (seeks to frame offset, reads RGB data into 1728-byte buffer)
+- Multiple stop conditions: seconds, plays, default to 1 play
+- Tested with 8 animations: 1-frame stills, 48-frame loops, 223-frame clips, 6327-frame video (3.5 min)
+- All stop conditions working (time-based, play-count-based)
+- Heap stable at ~187KB free (6KB used for frame buffer)
+- Goto loops work correctly with frame playback
 
 ## Phase 5 — Polish & robustness
 - Add periodic metrics (every N seconds):

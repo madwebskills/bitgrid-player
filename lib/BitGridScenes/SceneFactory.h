@@ -16,6 +16,10 @@ public:
     // Returns nullptr if effect not supported
     IScene* createFXScene(const FXScene* fxScene);
     
+    // Create a scene from Frames scene data
+    // Returns nullptr if file invalid or missing
+    IScene* createFramesScene(const FramesScene* framesScene);
+    
 private:
     HAL::LedMatrix& ledMatrix_;
     

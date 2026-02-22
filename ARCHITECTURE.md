@@ -39,10 +39,11 @@ The player is built around a small core loop with modular subsystems:
 	- `PlaylistLoader.h/.cpp` — JSON parsing with ArduinoJson, validates structure
 	- `PlaybackManager.h/.cpp` — state machine for playlist playback, scene transitions, timing
 - `/lib/BitGridScenes/`
-	- `IScene.h` — interface (`begin`, `tick`, `renderFrame`)
+	- `IScene.h` — interface (`begin`, `tick`, `renderFrame`, `shouldStop`)
 	- `SceneSolid.h/.cpp` — breathing test scene (fallback when no playlist)
 	- `SceneError.h/.cpp` — fallback scene (flashing red, ready but unused)
 	- `SceneSolidFX.h/.cpp` — "solid" FX effect with color parameter and breathing
+	- `SceneFrames.h/.cpp` — BGR1 binary animation streaming from SD card
 	- `SceneFactory.h/.cpp` — dynamic scene creation from playlist FX data, color parsing
 
 ## Key interfaces
@@ -87,7 +88,25 @@ Start simple:
 - Content paths relative to `sd:/`, eg. `sd:/anims/*.bin`
 
 We can evolve our binary format later, but keep loader isolated so formats don’t infect rendering code.
+### BGR1 Format (implemented)
+Binary frame animation format for streaming from SD:
+- **Header (16 bytes):**
+  - `magic[4]`: "BGR1" (ASCII)
+  - `w, h, channels, flags`: 4 × uint8 (dimensions, channels=3)
+  - `frame_count`: uint16 LE
+  - `reserved`: uint16 (unused)
+  - `data_offset`: uint32 LE (offset to first frame, typically 16)
+- **Frame data:**
+  - RGB row-major, top-left origin
+  - 3 bytes per pixel (R, G, B)
+  - Frame size: `w * h * 3` bytes
+  - Frames stored sequentially after header
 
+**Implementation notes:**
+- Streaming approach: seek to frame offset, read into reusable buffer (1728 bytes for 24×24)
+- Validation: checks magic, dimensions match display, channels=3, frame_count>0
+- Stop conditions: `stop.seconds` (time-based) or `stop.plays` (loop count), defaults to 1 play
+- See `DATA_FORMATS.md` for full specification
 ## Error handling
 - If SD mount fails: log + activate Error Scene (clear visible signal).
 - If playlist missing: log + fallback to a default scene.

@@ -1,5 +1,6 @@
 #include "SceneFactory.h"
 #include "SceneSolidFX.h"
+#include "SceneFrames.h"
 #include <Log.h>
 
 namespace BitGrid {
@@ -51,6 +52,20 @@ uint32_t SceneFactory::parseColor(const String& colorStr) {
     }
     
     return color & 0xFFFFFF;  // Mask to 24 bits
+}
+
+IScene* SceneFactory::createFramesScene(const FramesScene* framesScene) {
+    if (!framesScene) return nullptr;
+    
+    // Get stop conditions
+    int stopSeconds = framesScene->stop.seconds;
+    int stopPlays = framesScene->stop.plays;
+    
+    Log::debug("SCNF", "Creating frames scene: file='%s' fps=%d stop={s:%d,p:%d}",
+        framesScene->file.c_str(), framesScene->fps, stopSeconds, stopPlays);
+    
+    return new SceneFrames(ledMatrix_, framesScene->file, framesScene->fps,
+                          stopSeconds, stopPlays);
 }
 
 } // namespace Scenes

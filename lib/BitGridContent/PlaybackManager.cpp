@@ -1,4 +1,5 @@
 #include "PlaybackManager.h"
+#include "SceneFrames.h"
 #include <Log.h>
 
 namespace BitGrid {
@@ -121,12 +122,18 @@ bool PlaybackManager::loadScene(int index) {
         }
         
     } else if (sceneData->type == "frames") {
-        // TODO: Phase 4 - implement frames scene loader
-        Log::warn("PLBK", "Scene[%d]: Frames scenes not yet supported, skipping '%s'", 
-            index, sceneData->id.c_str());
-        currentSceneIndex_ = index;
-        advanceToNextScene();
-        return false;
+        FramesScene* framesScene = static_cast<FramesScene*>(sceneData);
+        currentScene_ = sceneFactory_.createFramesScene(framesScene);
+        
+        if (currentScene_) {
+            Log::info("PLBK", "Scene[%d]: Frames '%s' fps=%d file='%s'",
+                index, sceneData->id.c_str(), framesScene->fps, framesScene->file.c_str());
+        } else {
+            Log::error("PLBK", "Failed to create frames scene: %s", framesScene->file.c_str());
+            currentSceneIndex_ = index;
+            advanceToNextScene();
+            return false;
+        }
         
     } else {
         Log::error("PLBK", "Unknown scene type: %s", sceneData->type.c_str());
@@ -173,8 +180,11 @@ bool PlaybackManager::shouldStopCurrentScene() const {
         }
         
     } else if (sceneData->type == "frames") {
-        // TODO: Phase 4 - implement frames scene stop logic
-        // Will need to track play count (loops through frame sequence)
+        // Check if frames scene says it should stop
+        if (currentScene_->shouldStop()) {
+            Log::debug("PLBK", "Frames scene stopping");
+            return true;
+        }
     }
     
     return false;
