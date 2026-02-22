@@ -50,3 +50,28 @@ Why:
 
 Trade-off:
 - Possible format changes later, mitigated by isolating loader code.
+
+## Add WiFi file manager (mid-project decision)
+Decision:
+- Added WiFi station mode + web-based SD file manager during Phase 1.
+
+Why:
+- Enclosure is very tight and wiring is fragile.
+- Removing SD card repeatedly risks damaging connections.
+- Web UI allows uploading playlist.json and .bin files without physical access.
+
+Trade-off:
+- Adds ~40KB RAM usage and ~520KB flash for WiFi + WebServer libraries.
+- WiFi credentials are hardcoded in Config.h (acceptable for standalone appliance).
+- Reduced loop FPS from ~1000 to ~52 due to web server tick overhead (still more than adequate).
+
+## Disable periodic heartbeat logs
+Decision:
+- Heartbeat logs (FPS, heap, uptime) are disabled by default, can be uncommented for debugging.
+
+Why:
+- Web file manager usage generates enough useful logs.
+- Continuous FPS logging clutters Serial monitor during normal operation.
+
+Trade-off:
+- Less visibility into runtime health, but can be re-enabled easily when troubleshooting.

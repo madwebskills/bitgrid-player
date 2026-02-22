@@ -1,6 +1,6 @@
 # Execution Plan
 
-## Phase 0 — Baseline skeleton
+## Phase 0 — Baseline skeleton ✅ COMPLETE
 - Create core module structure under `/lib` as per ARCHITECTURE.
 - Add logging module with levels and tags.
 - Ensure `main.cpp` is thin and delegates to `App`.
@@ -9,7 +9,9 @@ Acceptance:
 - Serial shows boot banner, build info, heap.
 - LED shows a simple scene (solid colour) without SD involvement.
 
-## Phase 1 — SD subsystem
+**Status:** Complete. All modules created, logging working, main.cpp is 17 lines, breathing magenta test scene renders at ~52 FPS.
+
+## Phase 1 — SD subsystem ✅ COMPLETE
 - Implement `SdCard` wrapper:
 	- init SPI
 	- mount SD
@@ -20,6 +22,24 @@ Acceptance:
 Acceptance:
 - On boot, SD mount result is logged.
 - If SD absent/fail, app continues with Error Scene.
+
+**Status:** Complete. SD mounts successfully, logs card type/size, lists root directory. Graceful fallback if SD missing.
+
+## Phase 1.5 — WiFi File Manager (not originally planned) ✅ COMPLETE
+- Added WiFi station mode connection to local network.
+- Implemented web-based file manager with Bootstrap + Vue 3 (CDN).
+- Features:
+	- Browse folders on SD card
+	- Upload files to current directory
+	- Create folders
+	- Delete files
+- Accessible via browser at device IP address.
+
+Acceptance:
+- WiFi connects on boot and logs IP address.
+- Web UI allows full SD card management without opening enclosure.
+
+**Status:** Complete. File uploads working, folder creation working, no need to remove SD card from tight enclosure.
 
 ## Phase 2 — Playlist loader (minimal)
 - Decide initial playlist format:

@@ -45,7 +45,10 @@
                 "fit": "crop"
             },
             "source": "/Batman_Eats_a_Hotdog.mp4",
-            "file": "anims/batman.bin"
+            "file": "anims/batman.bin",
+            "stop": {
+                "plays": 1
+            }
         },
         {
             "id": "lavalamp",
@@ -71,7 +74,7 @@
             "type": "frames",
             "effect": "solid",
             "stop": {
-                "seconds": 2
+                "seconds": 10
             },
             "params": {
                 "colour": "#00AEEF"
@@ -110,7 +113,7 @@
             "type": "frames",
             "effect": "solid",
             "stop": {
-                "seconds": 2
+                "seconds": 15
             },
             "params": {
                 "colour": "#00AEEF"
@@ -129,7 +132,7 @@
             "type": "frames",
             "effect": "solid",
             "stop": {
-                "seconds": 2
+                "plays": 3
             },
             "params": {
                 "colour": "#00AEEF"
@@ -148,7 +151,7 @@
             "type": "frames",
             "effect": "solid",
             "stop": {
-                "seconds": 2
+                "seconds": 5
             },
             "params": {
                 "colour": "#00AEEF"
@@ -176,7 +179,10 @@
                 "dither": "none"
             },
             "source": "/video/Britney Spears - Toxic.avi",
-            "file": "anims/toxic.bin"
+            "file": "anims/toxic.bin",
+            "stop": {
+                "plays": 1
+            }
         },
         {
             "id": "loop",

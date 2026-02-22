@@ -23,23 +23,24 @@ The player is built around a small core loop with modular subsystems:
 - Print boot diagnostics
 - Enter a `tick()` loop
 
-## Suggested repo layout
-- `src/main.cpp`
+## Current repo layout (as implemented)
+- `src/main.cpp` — thin entrypoint (17 lines)
 - `/lib/BitGridCore/`
-	- `App.h/.cpp` — high-level orchestration, scene switching
-	- `Log.h/.cpp` — logging utilities
-	- `Config.h` — pins, matrix dims, compile-time config
+	- `App.h/.cpp` — high-level orchestration, boot sequence, tick loop
+	- `Log.h/.cpp` — tagged, levelled logging (DEBUG/INFO/WARN/ERROR)
+	- `Config.h` — pins, matrix dims, WiFi credentials, compile-time config
 - `/lib/BitGridHAL/`
-	- `LedMatrix.h/.cpp` — wraps chosen LED library, provides `present()`
-	- `SdCard.h/.cpp` — mount, list, open, stats
-	- `Timebase.h/.cpp` — millis helpers, frame timing
-- `/lib/BitGridContent/`
-	- `Playlist.h/.cpp` — playlist model
-	- `PlaylistLoader.h/.cpp` — load from SD (JSON or simple text)
+	- `LedMatrix.h/.cpp` — wraps FastLED, includes tile mapping (24×24, 3×3 tiles of 8×8)
+	- `SdCard.h/.cpp` — SPI init, mount, card info, directory listing
+	- `WifiManager.h/.cpp` — WiFi station mode connection
+	- `WebFileManager.h/.cpp` — HTTP server for SD card file management
+- `/lib/BitGridContent/` — (reserved for Phase 2+)
+	- `Playlist.h/.cpp` — playlist model (planned)
+	- `PlaylistLoader.h/.cpp` — load from SD JSON (planned)
 - `/lib/BitGridScenes/`
-	- `IScene.h` — interface
-	- `SceneSolid.h/.cpp` — simple starter scene
-	- `SceneError.h/.cpp` — fallback scene (eg red pulse)
+	- `IScene.h` — interface (`begin`, `tick`, `renderFrame`)
+	- `SceneSolid.h/.cpp` — breathing test scene (currently active)
+	- `SceneError.h/.cpp` — fallback scene (flashing red, ready but unused)
 
 ## Key interfaces
 

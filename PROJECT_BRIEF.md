@@ -21,8 +21,14 @@ BitGrid Player runs on an ESP32-C3 Super Mini, reads “content” from an SD ca
 ## Non-goals (for v1)
 - Web UI for authoring playlists (handled externally).
 - Real-time streaming content over Wi-Fi.
-- OTA updates.
+- OTA updates (though WiFi is available for future use).
 - Complex 3D/physics visualisations.
+
+## Features added beyond original scope
+- **WiFi File Manager:** Web-based SD card management to avoid opening the tight enclosure.
+  - Browse folders, upload files, create directories, delete files.
+  - Accessible via browser at device IP address.
+  - Uses Bootstrap 5 + Vue 3 (CDN) for clean, responsive UI.
 
 ## Constraints
 - Target: ESP32-C3 Super Mini (Arduino framework via PlatformIO).
