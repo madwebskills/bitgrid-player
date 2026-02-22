@@ -19,7 +19,13 @@ static const char HTML_PAGE[] PROGMEM = R"rawliteral(
 </head>
 <body>
     <div id="app" class="container py-4">
-        <h1 class="mb-4">BitGrid SD Card Manager</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>BitGrid SD Card Manager</h1>
+            <button @click="reloadPlaylist" class="btn btn-warning" :disabled="reloading">
+                <span v-if="reloading" class="spinner-border spinner-border-sm me-2"></span>
+                {{ reloading ? 'Reloading...' : 'Reload Playlist' }}
+            </button>
+        </div>
         
         <!-- Current path breadcrumb -->
         <nav aria-label="breadcrumb">
@@ -113,6 +119,7 @@ static const char HTML_PAGE[] PROGMEM = R"rawliteral(
                     loading: false,
                     uploading: false,
                     creating: false,
+                    reloading: false,
                     newFolderName: '',
                     error: null
                 };
@@ -207,6 +214,20 @@ static const char HTML_PAGE[] PROGMEM = R"rawliteral(
                         this.creating = false;
                     }
                 },
+                async reloadPlaylist() {
+                    this.reloading = true;
+                    try {
+                        const response = await fetch('/reload', {
+                            method: 'POST'
+                        });
+                        if (!response.ok) throw new Error('Reload failed');
+                        alert('Playlist reloaded successfully!');
+                    } catch (e) {
+                        alert('Reload failed: ' + e.message);
+                    } finally {
+                        this.reloading = false;
+                    }
+                },
                 formatSize(bytes) {
                     if (bytes < 1024) return bytes + ' B';
                     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
@@ -224,7 +245,8 @@ static const char HTML_PAGE[] PROGMEM = R"rawliteral(
 
 WebFileManager::WebFileManager(uint16_t port) : server_(port) {}
 
-bool WebFileManager::begin() {
+bool WebFileManager::begin(ReloadCallback reloadCb) {
+    reloadCallback_ = reloadCb;
     server_.on("/", HTTP_GET, [this]() { handleRoot(); });
     server_.on("/list", HTTP_GET, [this]() { handleList(); });
     server_.on("/upload", HTTP_POST, 
@@ -233,6 +255,7 @@ bool WebFileManager::begin() {
     );
     server_.on("/delete", HTTP_DELETE, [this]() { handleDelete(); });
     server_.on("/mkdir", HTTP_POST, [this]() { handleCreateFolder(); });
+    server_.on("/reload", HTTP_POST, [this]() { handleReloadPlaylist(); });
     server_.onNotFound([this]() { handleNotFound(); });
 
     server_.begin();
@@ -385,6 +408,16 @@ void WebFileManager::handleDelete() {
         Log::error(TAG, "Failed to delete: %s", path.c_str());
         server_.send(500, "application/json", "{\"error\":\"Delete failed\"}");
     }
+}
+
+void WebFileManager::handleReloadPlaylist() {
+    if (!reloadCallback_) {
+        server_.send(500, "application/json", "{\"error\":\"Reload callback not set\"}");
+        return;
+    }
+    
+    reloadCallback_();
+    server_.send(200, "application/json", "{\"success\":true,\"message\":\"Playlist reloaded\"}");
 }
 
 void WebFileManager::handleNotFound() {

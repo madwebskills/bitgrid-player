@@ -20,6 +20,9 @@ public:
 
     void begin();
     void tick();
+    
+    // For web API: reload playlist from SD card
+    void reloadPlaylist();
 
 private:
     HAL::LedMatrix ledMatrix_;

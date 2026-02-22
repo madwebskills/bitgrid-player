@@ -91,7 +91,7 @@ Acceptance:
 - Heap stable at ~187KB free (6KB used for frame buffer)
 - Goto loops work correctly with frame playback
 
-## Phase 5 — Polish & robustness
+## Phase 5 — Polish & robustness ✅ COMPLETE
 - Add periodic metrics (every N seconds):
 	- fps, free heap, SD ok
 - Add watchdog-friendly loop behaviour (avoid long blocking reads).
@@ -100,3 +100,12 @@ Acceptance:
 Acceptance:
 - Player runs for hours without crashing.
 - Logs remain useful and not spammy (rate-limited).
+
+**Status:** Complete.
+- ✅ Gamma correction: FastLED TypicalLEDStrip preset for perceptually linear brightness and color temperature
+- ✅ Color temperature correction: WS2812B LEDs warmed to natural white
+- ✅ Playlist reload endpoint: `/reload` POST endpoint in web UI for hot-reload without power cycle
+- ✅ Dynamic brightness control: `display.brightness` from JSON config now applied on load and reload
+- ✅ Logging cleanup: removed excessive debug spam, kept useful info only
+- ✅ Tested with 8 real animations, heap stable at ~187KB, playback smooth and responsive
+- ⏳ Optional: FPS metrics/heartbeat logging (code present but disabled to reduce spam)

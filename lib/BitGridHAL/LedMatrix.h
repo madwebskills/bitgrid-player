@@ -19,6 +19,9 @@ public:
     void fill(const CRGB &color);
     void setPixel(uint16_t x, uint16_t y, const CRGB &color);
     void show();
+    
+    // Dynamic brightness control (0-255)
+    void setBrightness(uint8_t brightness);
 
 private:
     uint16_t xyToIndex(uint16_t x, uint16_t y) const;

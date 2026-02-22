@@ -46,6 +46,12 @@ void App::begin() {
         if (playlist_) {
             Log::info(TAG_APP, "Playlist loaded successfully: %d scenes", playlist_->sceneCount());
             
+            // Apply brightness from playlist config
+            if (playlist_->display.brightness > 0) {
+                ledMatrix_.setBrightness(playlist_->display.brightness);
+                Log::info(TAG_APP, "LED brightness set to %u", playlist_->display.brightness);
+            }
+            
             // Initialize playback manager
             playback_ = new PlaybackManager(ledMatrix_, playlist_);
             playback_->begin();
@@ -64,7 +70,8 @@ void App::begin() {
     // Start WiFi and web server
     bool wifiOk = wifi_.begin(Config::WIFI_SSID, Config::WIFI_PASSWORD);
     if (wifiOk) {
-        webServer_.begin();
+        // Set up playlist reload callback
+        webServer_.begin([this]() { this->reloadPlaylist(); });
     } else {
         Log::warn(TAG_APP, "Continuing without WiFi; web file manager unavailable");
     }
@@ -110,6 +117,39 @@ void App::tick() {
     //     frameCount_ = 0;
     //     lastFpsLogMs_ = now;
     // }
+}
+
+void App::reloadPlaylist() {
+    Log::info(TAG_APP, "Reloading playlist from SD card...");
+    
+    // Clean up current playback
+    if (playback_) {
+        delete playback_;
+        playback_ = nullptr;
+    }
+    if (playlist_) {
+        delete playlist_;
+        playlist_ = nullptr;
+    }
+    
+    // Try to load new playlist
+    playlist_ = PlaylistLoader::load("/playlist.json");
+    if (playlist_) {
+        Log::info(TAG_APP, "Playlist reloaded successfully: %d scenes", playlist_->sceneCount());
+        
+        // Apply brightness from playlist config
+        if (playlist_->display.brightness > 0) {
+            ledMatrix_.setBrightness(playlist_->display.brightness);
+            Log::info(TAG_APP, "LED brightness set to %u", playlist_->display.brightness);
+        }
+        
+        playback_ = new PlaybackManager(ledMatrix_, playlist_);
+        playback_->begin();
+    } else {
+        Log::error(TAG_APP, "Failed to reload playlist; using test scene");
+    }
+    
+    logHeapStats(TAG_APP);
 }
 
 void App::logBootBanner() {

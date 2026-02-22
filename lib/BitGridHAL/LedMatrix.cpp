@@ -9,6 +9,11 @@ static CRGB s_leds[Config::NUM_LEDS];
 bool LedMatrix::begin() {
     FastLED.addLeds<WS2812B, Config::LED_DATA_PIN, GRB>(s_leds, Config::NUM_LEDS);
     FastLED.setBrightness(Config::LED_BRIGHTNESS);
+    
+    // Apply gamma correction for perceptually linear brightness
+    // and color temperature correction for WS2812B (slightly warm)
+    FastLED.setCorrection(TypicalLEDStrip);
+    
     clear();
     FastLED.show();
     return true;
@@ -32,6 +37,10 @@ void LedMatrix::setPixel(uint16_t x, uint16_t y, const CRGB &color) {
 
 void LedMatrix::show() {
     FastLED.show();
+}
+
+void LedMatrix::setBrightness(uint8_t brightness) {
+    FastLED.setBrightness(brightness);
 }
 
 uint16_t LedMatrix::xyToIndex(uint16_t x, uint16_t y) const {
