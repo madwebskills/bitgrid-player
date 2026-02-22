@@ -1,0 +1,90 @@
+# Architecture
+
+## Overview
+The player is built around a small core loop with modular subsystems:
+
+- Core
+	- App orchestration, state machine, tick timing
+- HAL (hardware abstraction)
+	- LED output wrapper
+	- SD wrapper
+	- Time/timers
+- Content
+	- Manifest/playlist parsing
+	- Asset loading (frames, palettes, images, etc.)
+- Rendering
+	- Framebuffer + matrix mapping
+	- Present to LEDs
+- Scenes
+	- Pluggable effects / content-driven renderers
+
+`src/main.cpp` should only:
+- Initialise subsystems
+- Print boot diagnostics
+- Enter a `tick()` loop
+
+## Suggested repo layout
+- `src/main.cpp`
+- `/lib/BitGridCore/`
+	- `App.h/.cpp` — high-level orchestration, scene switching
+	- `Log.h/.cpp` — logging utilities
+	- `Config.h` — pins, matrix dims, compile-time config
+- `/lib/BitGridHAL/`
+	- `LedMatrix.h/.cpp` — wraps chosen LED library, provides `present()`
+	- `SdCard.h/.cpp` — mount, list, open, stats
+	- `Timebase.h/.cpp` — millis helpers, frame timing
+- `/lib/BitGridContent/`
+	- `Playlist.h/.cpp` — playlist model
+	- `PlaylistLoader.h/.cpp` — load from SD (JSON or simple text)
+- `/lib/BitGridScenes/`
+	- `IScene.h` — interface
+	- `SceneSolid.h/.cpp` — simple starter scene
+	- `SceneError.h/.cpp` — fallback scene (eg red pulse)
+
+## Key interfaces
+
+### Logging
+- Levels: DEBUG/INFO/WARN/ERROR
+- Compile-time switch for verbose logging
+- Include component tag: `[SD]`, `[LED]`, `[APP]`, etc.
+- Common helpers:
+	- `Log::info(tag, fmt, ...)`
+	- `Log::error(tag, fmt, ...)`
+
+### SD Card
+Responsibilities:
+- SPI init + mount
+- Card metadata (type, size)
+- FS stats (used/free)
+- File operations:
+	- exists, open, read, list
+- Return structured error info (not just bool)
+
+### LED Matrix
+Responsibilities:
+- Initialise LED library
+- Brightness limiting (configurable)
+- Framebuffer abstraction (eg RGB888 or RGB565)
+- Matrix mapping (x/y -> index)
+- `present()` is the only “show” boundary
+
+### Scenes
+Lifecycle:
+- `begin(ctx)`
+- `tick(ctx, dt_ms)`
+- `render(ctx)` (or render within tick, but keep consistent)
+- `end(ctx)`
+
+A Scene should not talk directly to SD; it requests assets via Content layer (or is provided prepared data).
+
+## Data formats (v1)
+Start simple:
+- `sd:/playlist.json`
+- Content paths relative to `sd:/`, eg. `sd:/anims/*.bin`
+
+We can evolve our binary format later, but keep loader isolated so formats don’t infect rendering code.
+
+## Error handling
+- If SD mount fails: log + activate Error Scene (clear visible signal).
+- If playlist missing: log + fallback to a default scene.
+- If asset read fails mid-play: log + skip to next item.

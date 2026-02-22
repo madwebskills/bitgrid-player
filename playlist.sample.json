@@ -1,0 +1,197 @@
+{
+    "version": 1,
+    "display": {
+        "w": 24,
+        "h": 24,
+        "brightness": 64,
+        "tiles": {
+            "x": 3,
+            "y": 3,
+            "w": 8,
+            "h": 8
+        },
+        "mapping": {
+            "tile_order": "row_major",
+            "tile_serpentine": false,
+            "tile_rotation": 0,
+            "pixel_order": "row_major",
+            "pixel_serpentine": true,
+            "origin": "bottom_right"
+        }
+    },
+    "scenes": [
+        {
+            "id": "intro",
+            "type": "fx",
+            "effect": "solid",
+            "stop": {
+                "seconds": 10
+            },
+            "params": {
+                "colour": "#b00b1e"
+            }
+        },
+        {
+            "id": "batman",
+            "type": "frames",
+            "effect": "solid",
+            "params": {
+                "colour": "#00AEEF"
+            },
+            "fps": 12,
+            "compile": {
+                "scale": "nearest",
+                "dither": "none",
+                "fit": "crop"
+            },
+            "source": "/Batman_Eats_a_Hotdog.mp4",
+            "file": "anims/batman.bin"
+        },
+        {
+            "id": "lavalamp",
+            "type": "frames",
+            "effect": "solid",
+            "stop": {
+                "plays": 5
+            },
+            "params": {
+                "colour": "#00AEEF"
+            },
+            "fps": 12,
+            "compile": {
+                "fit": "crop",
+                "scale": "nearest",
+                "dither": "none"
+            },
+            "source": "/lavalamp_pvw.mpg",
+            "file": "anims/lavalamp.bin"
+        },
+        {
+            "id": "arcticlight",
+            "type": "frames",
+            "effect": "solid",
+            "stop": {
+                "seconds": 2
+            },
+            "params": {
+                "colour": "#00AEEF"
+            },
+            "fps": 30,
+            "compile": {
+                "fit": "stretch",
+                "scale": "nearest",
+                "dither": "none"
+            },
+            "source": "/arcticlight_pvw.mpg",
+            "file": "anims/arcticlight.bin"
+        },
+        {
+            "id": "globe",
+            "type": "frames",
+            "effect": "solid",
+            "stop": {
+                "seconds": 20,
+                "plays": 20
+            },
+            "params": {
+                "colour": "#00AEEF"
+            },
+            "fps": 12,
+            "compile": {
+                "fit": "stretch",
+                "scale": "nearest",
+                "dither": "none"
+            },
+            "source": "/globe_pvw.mpg",
+            "file": "anims/globe.bin"
+        },
+        {
+            "id": "yarg_jpg",
+            "type": "frames",
+            "effect": "solid",
+            "stop": {
+                "seconds": 2
+            },
+            "params": {
+                "colour": "#00AEEF"
+            },
+            "fps": 12,
+            "compile": {
+                "fit": "stretch",
+                "scale": "nearest",
+                "dither": "none"
+            },
+            "source": "/yarg_2.0.jpg",
+            "file": "anims/yarg_jpg.bin"
+        },
+        {
+            "id": "nph_gif",
+            "type": "frames",
+            "effect": "solid",
+            "stop": {
+                "seconds": 2
+            },
+            "params": {
+                "colour": "#00AEEF"
+            },
+            "fps": 12,
+            "compile": {
+                "fit": "stretch",
+                "scale": "nearest",
+                "dither": "none"
+            },
+            "source": "/gifs/NPH.gif",
+            "file": "anims/nph_gif.bin"
+        },
+        {
+            "id": "devflare_png",
+            "type": "frames",
+            "effect": "solid",
+            "stop": {
+                "seconds": 2
+            },
+            "params": {
+                "colour": "#00AEEF"
+            },
+            "fps": 12,
+            "compile": {
+                "fit": "stretch",
+                "scale": "nearest",
+                "dither": "none"
+            },
+            "source": "/devflare.png",
+            "file": "anims/devflare_png.bin"
+        },
+        {
+            "id": "toxic",
+            "type": "frames",
+            "effect": "solid",
+            "params": {
+                "colour": "#00AEEF"
+            },
+            "fps": 30,
+            "compile": {
+                "fit": "crop",
+                "scale": "bilinear",
+                "dither": "none"
+            },
+            "source": "/video/Britney Spears - Toxic.avi",
+            "file": "anims/toxic.bin"
+        },
+        {
+            "id": "loop",
+            "type": "goto",
+            "effect": "solid",
+            "stop": {
+                "seconds": 2
+            },
+            "params": {
+                "colour": "#00AEEF"
+            },
+            "target": {
+                "id": "batman",
+                "index": ""
+            }
+        }
+    ]
+}
