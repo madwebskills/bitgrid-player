@@ -41,7 +41,7 @@ Acceptance:
 
 **Status:** Complete. File uploads working, folder creation working, no need to remove SD card from tight enclosure.
 
-## Phase 2 — Playlist loader (minimal)
+## Phase 2 — Playlist loader ✅ COMPLETE
 - Decide initial playlist format:
 	- JSON (preferred) OR plain text list
 - Implement `PlaylistLoader` and models.
@@ -51,18 +51,22 @@ Acceptance:
 - Logs: number of items, item types, any invalid entries.
 - If playlist missing/invalid: fallback scene.
 
-## Phase 3 — Content-driven playback loop
+**Status:** Complete. ArduinoJson v7.4.2 added, full playlist parsing working. Supports all scene types (frames/fx/goto), display config, stop conditions. Detailed logging shows parse results.
+
+## Phase 3 — Content-driven playback loop ✅ COMPLETE
 - Implement a simple player state machine:
 	- load item
 	- play for duration
 	- transition
 - Start with one content type:
-	- Example: “built-in scene name + duration”
+	- Example: "built-in scene name + duration"
 - Add scene registry/factory.
 
 Acceptance:
 - Playlist can switch between two scenes on a timer.
 - Serial logs scene transitions and timing.
+
+**Status:** Complete. PlaybackManager state machine handles scene transitions, timing, stop conditions. SceneFactory creates FX scenes dynamically. SceneSolidFX implements "solid" effect with color parsing. Goto scenes jump correctly. Deferred scene loading prevents stack overflow from rapid scene skipping. Heap stable at ~193KB free across infinite loops.
 
 ## Phase 4 — Add first real content type
 Pick one:

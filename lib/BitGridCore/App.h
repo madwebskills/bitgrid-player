@@ -9,6 +9,7 @@
 #include <SceneSolid.h>
 #include <Playlist.h>
 #include <PlaylistLoader.h>
+#include <PlaybackManager.h>
 
 namespace BitGrid {
 
@@ -27,6 +28,7 @@ private:
     HAL::WebFileManager webServer_;
     Scenes::SceneSolid testScene_;
     Playlist* playlist_ = nullptr;
+    PlaybackManager* playback_ = nullptr;
 
     uint32_t lastTickMs_ = 0;
     uint32_t frameCount_ = 0;

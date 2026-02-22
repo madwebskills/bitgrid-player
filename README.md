@@ -63,10 +63,12 @@ On boot you should see:
 - A BitGrid boot banner with build info and chip/SDK details.
 - LED matrix initialisation summary (dimensions, LED count, brightness).
 - SD mount result and, if successful, basic card information and a root directory listing.
+- Playlist loading with scene-by-scene parse details.
 - WiFi connection attempt and, if successful, the device IP address.
 - Web server start confirmation.
+- Playback manager initialization and first scene load.
 
-The LEDs will display a breathing magenta test scene at ~52 FPS, providing visual confirmation that the matrix is wired and mapped correctly.
+The LEDs will display playlist-driven content (FX scenes) or breathing magenta fallback if no playlist available.
 
 ## SD card and content
 
@@ -125,8 +127,9 @@ This structure is intended to make the code approachable for both humans and AI 
 
 ## Current status
 
-**Phases complete:** 0, 1, 1.5 (WiFi file manager)  
-**Next milestone:** Phase 2 — Playlist loader and JSON parsing  
+**Phases complete:** 0, 1, 1.5 (WiFi file manager), 2 (Playlist loader), 3 (Playback state machine)  
+**Next milestone:** Phase 4 — BGR1 binary frame reader for animations  
 **Hardware:** Fully functional, all subsystems tested  
-**Memory usage:** RAM 12.8% (41KB/327KB), Flash 64.6% (847KB/1.3MB)  
-**Performance:** ~52 FPS rendering + web server handling
+**Memory usage:** RAM 12.8% (42KB/327KB), Flash 66.2% (867KB/1.3MB), Heap ~193KB free during playback  
+**Performance:** ~52 FPS rendering + web server handling  
+**Playback:** FX scenes working ("solid" effect), frames scenes skip until Phase 4, goto scenes jump correctly

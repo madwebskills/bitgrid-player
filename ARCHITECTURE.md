@@ -34,13 +34,16 @@ The player is built around a small core loop with modular subsystems:
 	- `SdCard.h/.cpp` — SPI init, mount, card info, directory listing
 	- `WifiManager.h/.cpp` — WiFi station mode connection
 	- `WebFileManager.h/.cpp` — HTTP server for SD card file management
-- `/lib/BitGridContent/` — (reserved for Phase 2+)
-	- `Playlist.h/.cpp` — playlist model (planned)
-	- `PlaylistLoader.h/.cpp` — load from SD JSON (planned)
+- `/lib/BitGridContent/`
+	- `Playlist.h` — playlist model (DisplayConfig, Scene types: Frames/FX/Goto, StopCondition)
+	- `PlaylistLoader.h/.cpp` — JSON parsing with ArduinoJson, validates structure
+	- `PlaybackManager.h/.cpp` — state machine for playlist playback, scene transitions, timing
 - `/lib/BitGridScenes/`
 	- `IScene.h` — interface (`begin`, `tick`, `renderFrame`)
-	- `SceneSolid.h/.cpp` — breathing test scene (currently active)
+	- `SceneSolid.h/.cpp` — breathing test scene (fallback when no playlist)
 	- `SceneError.h/.cpp` — fallback scene (flashing red, ready but unused)
+	- `SceneSolidFX.h/.cpp` — "solid" FX effect with color parameter and breathing
+	- `SceneFactory.h/.cpp` — dynamic scene creation from playlist FX data, color parsing
 
 ## Key interfaces
 

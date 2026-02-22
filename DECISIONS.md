@@ -75,3 +75,21 @@ Why:
 
 Trade-off:
 - Less visibility into runtime health, but can be re-enabled easily when troubleshooting.
+
+## Deferred scene loading to prevent stack overflow
+Decision:
+- Scene transitions are deferred to next tick via `needSceneLoad_` flag instead of recursive `loadScene()` calls.
+
+Why:
+- Rapid scene skipping (unsupported frames scenes) + goto loops caused deep recursion.
+- Stack overflow after ~12 loops through playlist (8 skipped scenes per loop = 96+ recursive calls).
+- Symptom: Crash during scene transitions with "stack overflow in task loopTask".
+
+Solution:
+- Set deferred load flag and return to main loop immediately.
+- Next `tick()` processes deferred load with fresh stack frame.
+- Breaks recursion chain, keeps stack depth constant.
+
+Trade-off:
+- Scene transitions take one extra tick (~1ms) but prevents crashes entirely.
+- Heap remains stable at ~193KB free across infinite loops.

@@ -12,6 +12,10 @@ static const char *TAG_APP = "APP";
 App::App() : testScene_(ledMatrix_) {}
 
 App::~App() {
+    if (playback_) {
+        delete playback_;
+        playback_ = nullptr;
+    }
     if (playlist_) {
         delete playlist_;
         playlist_ = nullptr;
@@ -41,13 +45,22 @@ void App::begin() {
         playlist_ = PlaylistLoader::load("/playlist.json");
         if (playlist_) {
             Log::info(TAG_APP, "Playlist loaded successfully: %d scenes", playlist_->sceneCount());
+            
+            // Initialize playback manager
+            playback_ = new PlaybackManager(ledMatrix_, playlist_);
+            playback_->begin();
         } else {
             Log::warn(TAG_APP, "Failed to load playlist; using test scene");
         }
     } else {
         Log::warn(TAG_APP, "Continuing without SD card; fallback scene will be used");
     }
-
+    
+    // Initialize fallback test scene (used if no playlist)
+    if (!playback_) {
+        testScene_.begin();
+    }
+    
     // Start WiFi and web server
     bool wifiOk = wifi_.begin(Config::WIFI_SSID, Config::WIFI_PASSWORD);
     if (wifiOk) {
@@ -57,9 +70,6 @@ void App::begin() {
     }
 
     logHeapStats(TAG_APP);
-
-    // Initialize the test scene
-    testScene_.begin();
 
     lastTickMs_ = millis();
     lastFpsLogMs_ = lastTickMs_;
@@ -73,9 +83,20 @@ void App::tick() {
     // Service web server
     webServer_.tick();
 
-    // Update and render the test scene
-    testScene_.tick(dt);
-    testScene_.renderFrame();
+    // Update and render scene (playlist or fallback)
+    if (playback_) {
+        bool sceneChanged = playback_->tick(dt);
+        playback_->renderFrame();
+        
+        if (sceneChanged) {
+            Log::debug(TAG_APP, "Scene transition, free heap=%u", ESP.getFreeHeap());
+        }
+    } else {
+        // Fallback to test scene
+        testScene_.tick(dt);
+        testScene_.renderFrame();
+    }
+    
     ledMatrix_.show();
 
     frameCount_++;
